@@ -238,6 +238,8 @@ e_address;
     unsigned int get_x() const { return this->cursor->x; }
     unsigned int get_y() const { return this->cursor->y; }
 
+    unsigned int get_width() const { return this->width; }
+     unsigned int get_height() const { return this->height; }
 };
 
 #endif
