@@ -4,5 +4,5 @@ unit_test = executable(
     'unittests', 'test.cpp', include_directories : incdir
 )
 
-test('[factorial]', unit_test)
+# Adds each Unit test to meson
 test('[torus]', unit_test)
