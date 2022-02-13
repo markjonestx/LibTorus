@@ -40,8 +40,6 @@ class Torus {
     void clear() {
         Node *last;
 
-        this->seek(0,0);
-
         for (unsigned int col = 0; col < this->width; col++) {
             for (unsigned int row = 0; row < this->height; row++) {
                 last = this->cursor;
