@@ -27,7 +27,11 @@ class Torus {
     Node* cursor;
     unsigned int width;
     unsigned int height;
+s;
 
+
+    /**
+     * @
 
     /**
      * @class Torus
@@ -112,7 +116,9 @@ public:
         this->cursor = first;  // Setup the cursor
         this->width = width;
         this->height = height;
+rences = new int(1);
 
+        // Wrap w
         // Wrap what is effectively a cylinder into itself now
         // to create the torus
         for (unsigned int row = 0; row < height; row++) {
@@ -125,26 +131,63 @@ public:
 
 
     Torus(Torus &other) :
-        width(other.width), height(other.height), cursor(other.cursor) {};
+r.width), height(other.height), cursor(other.cursor) {
+            references = other.references;
+            references++;
+        };
 
-
-    ~Torus() { this->clear(); }
-
-
-    Torus operator=(const Torus &other) {
-        seek(other.x, other.y);
-
-        // Make sure these aren't already the same objects
-        if (this->cursor != other.cursor)
-            clear();
-
-        this->cursor = cursor;
-        this->width = width;
-        this->height = height;
+    /**
+     * @b
+     if (this->references == 1)
+            this->clear();
+        else
+            this->references--;
     }
 
+    /**
+     * @b
+=(const Torus<T> &other) {
+        if (this == other) {
+            this->cursor = other.cursor;
+            return this;
+        }
 
-    void seek(unsigned int x, unsigned int y) {
+        if (this-
+        // Make sure these aren't already the same objects
+references == 1) {
+            clear(            clear();
+ this->ref
+rences = other.references;
+        this->height = other.height;
+        this->width = other.width;
+        this->cursor = other.cursor;
+        return this;
+    }
+
+    /**
+       }
+
+=(const Torus<T> &other) const {
+        unsigned int saved_x, saved_y;
+        bool same_address;
+
+        saved_x = this->cursor->x;
+        saved_y = this->cursor->y;
+
+        if (!(this->width == other.width && this->height == other.height)) {
+            return false;
+        }
+
+        this->seek(other.get_x(), other.get_y());
+        same_address = this->cursor == other.cursor;
+        this->seek(saved_x, saved_y);
+
+        return sa
+e_address;
+    }
+
+    /**
+     * @b    void seek(unsigned int x, unsigned int y) {
         // 50/50 shot this is efficient.
 
         int x_move_down;
