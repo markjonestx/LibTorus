@@ -230,10 +230,26 @@ e_address;
 
 
     void move_left() {this->cursor = this->cursor->left;}
+    void move_left(unsigned int steps) {
+        for (int i=0; i < steps; i++)
+            this->move_left();
+    }
     void move_right() {this->cursor = this->cursor->right;}
+    void move_right(unsigned int steps) {
+        for (int i=0; i < steps; i++)
+            this->move_right();
+    }
     void move_up() {this->cursor = this->cursor->up;}
+    void move_up(unsigned int steps) {
+        for (int i=0; i < steps; i++)
+            this->move_up();
+    }
     void move_down() {this->cursor = this->cursor->down;}
 
+    void move_down(unsigned int steps) {
+        for (int i=0; i < steps; i++)
+            this->move_down();
+    }
 
     unsigned int get_x() const { return this->cursor->x; }
     unsigned int get_y() const { return this->cursor->y; }
