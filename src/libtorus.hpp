@@ -143,8 +143,8 @@ public:
      */
     Torus(Torus &other) :
         width(other.width), height(other.height), cursor(other.cursor) {
-            references = other.references;
-            references++;
+            this->references = other.references;
+            (*this->references)++;
         };
 
     /**
@@ -153,10 +153,10 @@ public:
      *  shared between objects, then the reference is just decremented.
      */
     ~Torus() {
-        if (this->references == 1)
+        if (*this->references == 1)
             this->clear();
         else
-            this->references--;
+            (*this->references)--;
     }
 
     /**
@@ -174,7 +174,7 @@ public:
             return this;
         }
 
-        if (this->references == 1) {
+        if (*this->references == 1) {
             clear();
         }
 
