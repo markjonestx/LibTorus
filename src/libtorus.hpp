@@ -2,10 +2,15 @@
 #define _TORUS_
 
 /**
- * @brief A
+ * @brief A Torus shapped DataType that loops in both dimensions
+ * @details This data type is functionally similar to a linked list, just
+ *  overengineered. This functions as a multi-deminsional doubly linked list
+ *  that is connected on both deminsions forming what is basically a Torus
+ *  in memory.
  *
- * @tparam T
+ * @tparam T The datatype the Torus should store, like a Linked List
  */
+
 template <class T>
 class Torus {
 
@@ -23,18 +28,14 @@ class Torus {
         Node* down;
     };
 
-    // Tracks the position inside the Torus, and tracks boundaries
+    // Tracks the position inside the Torus, and tracks the size of the Torus
     Node* cursor;
     unsigned int width;
     unsigned int height;
-s;
+    int* references;
 
 
     /**
-     * @
-
-    /**
-     * @class Torus
      * @brief Clears all memory for the Torus
      * @details This will seek to the beginning of the torus, then iterate
      * over each point, clearing the memory, until the Torus is empty. This
@@ -62,7 +63,17 @@ s;
 
 public:
 
+    /**
+     * @brief Construct a new Torus object with a default shape of 1,1
+     */
     Torus() : Torus(1,1) {}
+
+    /**
+     * @brief Construct a new Torus object
+     *
+     * @param width The width, or X dimension, of the Torus
+     * @param height The height, or Y dimension, of the Torus
+     */
     Torus(unsigned int width, unsigned int height) {
         Node* temp;
         Node* last;
@@ -70,7 +81,6 @@ public:
         Node* first;
         Node* first_row;
 
-        // Initialize one column at a time
         for (unsigned int col = 0; col < width; col++) {
             for (unsigned int row = 0; row < height; row++) {
 
@@ -78,12 +88,11 @@ public:
                 temp->x = col;
                 temp->y = row;
 
-                // Grab the first values
                 if (col == 0 && row == 0)
                     first = temp;
 
-                // Hold the first item in the row
-                // so we can wrap the column into a tube
+                // Hold the first item in the row so we can wrap
+                // the column into a tube
                 if (row == 0)
                     first_row = temp;
 
@@ -100,7 +109,6 @@ public:
                     temp->up = last;
                 }
 
-                // Mark current Node as last Node
                 last = temp;
             }
 
@@ -108,7 +116,6 @@ public:
             first_row->up = last;
             last->down = first_row;
 
-            // Prep for next series of iterations
             last = nullptr;
             last_col = first_row;
         }
@@ -116,9 +123,8 @@ public:
         this->cursor = first;  // Setup the cursor
         this->width = width;
         this->height = height;
-rences = new int(1);
+        this->references = new int(1);
 
-        // Wrap w
         // Wrap what is effectively a cylinder into itself now
         // to create the torus
         for (unsigned int row = 0; row < height; row++) {
@@ -129,35 +135,50 @@ rences = new int(1);
         }
     }
 
-
+    /**
+     * @brief Constructs a new Torus from an existing Torus
+     * @details This is a shallow copy, the individual nodes that form
+     *  the Torus will be shared between the two Tori
+     * @param other The other Torus to copy from
+     */
     Torus(Torus &other) :
-r.width), height(other.height), cursor(other.cursor) {
+        width(other.width), height(other.height), cursor(other.cursor) {
             references = other.references;
             references++;
         };
 
     /**
-     * @b
-     if (this->references == 1)
+     * @brief Destroy the Torus object
+     * @details Will destroy the object, unless the underlying Torus is
+     *  shared between objects, then the reference is just decremented.
+     */
+    ~Torus() {
+        if (this->references == 1)
             this->clear();
         else
             this->references--;
     }
 
     /**
-     * @b
-=(const Torus<T> &other) {
+     * @brief Makes two copies of the same Torus share the same location
+     * @details This is a shallow copy if the underlying Tori are the same, or
+     *  if there is more than one reference to the current Torus. Otherwise,
+     *  this will clear the existing Torus and then perform the shallow copy.
+     *
+     * @param other Another torus to set this object too
+     * @return Torus
+     */
+    Torus operator=(const Torus<T> &other) {
         if (this == other) {
             this->cursor = other.cursor;
             return this;
         }
 
-        if (this-
-        // Make sure these aren't already the same objects
-references == 1) {
-            clear(            clear();
- this->ref
-rences = other.references;
+        if (this->references == 1) {
+            clear();
+        }
+
+        this->references = other.references;
         this->height = other.height;
         this->width = other.width;
         this->cursor = other.cursor;
@@ -165,9 +186,13 @@ rences = other.references;
     }
 
     /**
-       }
-
-=(const Torus<T> &other) const {
+     * @brief Compares the existing Torus to another Torus
+     *
+     * @param other The other Torus
+     * @return true If the two Torus are the same
+     * @return false If the two Torus are different
+     */
+    bool operator==(const Torus<T> &other) const {
         unsigned int saved_x, saved_y;
         bool same_address;
 
@@ -182,13 +207,18 @@ rences = other.references;
         same_address = this->cursor == other.cursor;
         this->seek(saved_x, saved_y);
 
-        return sa
-e_address;
+        return same_address;
     }
 
     /**
-     * @b    void seek(unsigned int x, unsigned int y) {
-        // 50/50 shot this is efficient.
+     * @brief Seeks to the desired position in the Torus
+     *
+     * @param x X cordinate to seek to
+     * @param y Y cordinate to seek to
+     */
+    void seek(unsigned int x, unsigned int y) {
+        // TODO: Actually calculate the shortest distance and take that
+        // route instead
 
         int x_move_down;
         bool x_loops;
@@ -218,44 +248,116 @@ e_address;
             this->move_down();
     }
 
-
+    /**
+     * @brief Determines if the current node actually contains data
+     *
+     * @return true If the current node contains memory
+     * @return false If the current node does not contain memory
+     */
     bool is_valid() const { return this->cursor->initialized; }
+
+    /**
+     * @brief Get the data stored in the current node
+     *
+     * @return T current data
+     */
     T get_data() const { return this->cursor->data; }
+
+    /**
+     * @brief Sets the memory at the current node as invalid
+     */
     void clear_data() { this->cursor->initialized = false; }
 
+    /**
+     * @brief Set the data for the current node
+     *
+     * @param data
+     */
     void set_data(T &data) {
         this->cursor->data = data;
         this->cursor->initialized = true;
     }
 
-
+    /**
+     * @brief Moves the cursor left
+     */
     void move_left() {this->cursor = this->cursor->left;}
+
+    /**
+     * @brief Moves the cursor multiple steps to the left
+     * @param steps How many steps left to move the cursor
+     */
     void move_left(unsigned int steps) {
         for (int i=0; i < steps; i++)
             this->move_left();
     }
+
+    /**
+     * @brief Moves the cursor right
+     */
     void move_right() {this->cursor = this->cursor->right;}
+
+    /**
+     * @brief Moves the cursor multiple steps to the right
+     * @param steps How many steps right to move the cursor
+     */
     void move_right(unsigned int steps) {
         for (int i=0; i < steps; i++)
             this->move_right();
     }
+
+    /**
+     * @brief Moves the cursor up
+     */
     void move_up() {this->cursor = this->cursor->up;}
+
+    /**
+     * @brief Moves the cursor multiple steps up
+     * @param steps How many steps to move the cursor
+     */
     void move_up(unsigned int steps) {
         for (int i=0; i < steps; i++)
             this->move_up();
     }
+
+    /**
+     * @brief Moves the cursor down
+     */
     void move_down() {this->cursor = this->cursor->down;}
 
+    /**
+     * @brief Moves the cursor multiple steps down
+     * @param steps How many steps to move the cursor
+     */
     void move_down(unsigned int steps) {
         for (int i=0; i < steps; i++)
             this->move_down();
     }
 
+    /**
+     * @brief Get the X position of the cursor
+     * @return unsigned int
+     */
     unsigned int get_x() const { return this->cursor->x; }
+
+    /**
+     * @brief Get the Y position of the cursor
+     * @return unsigned int
+     */
     unsigned int get_y() const { return this->cursor->y; }
 
+    /**
+     * @brief Get the width of the Torus Grid
+     * @return unsigned int
+     */
     unsigned int get_width() const { return this->width; }
+
+    /**
+     * @brief Get the height of the Torus Grid
+     * @return unsigned int
+     */
      unsigned int get_height() const { return this->height; }
+
 };
 
 #endif
